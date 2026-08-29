@@ -31,3 +31,6 @@ Thumbs.db
 
 # Autosave
 autosave.dat
+
+# Claude Code
+.claude/
