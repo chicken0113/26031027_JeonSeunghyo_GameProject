@@ -66,6 +66,83 @@
 - **골드** : 몬스터 처치 시 자동으로 획득된다.
 - **장비 드랍** : 몬스터 처치 시 일정 확률로 무기 또는 방어구가 드랍된다. 보스는 드랍 확률이 더 높다.
 
+## 씬 구성
+
+게임은 세 가지 씬으로 구성된다.
+
+---
+
+### 1. 시작 씬 (Title Scene)
+
+![타이틀 배경](../resource/image/background/title_bg.png)
+
+| 구성 요소 | 설명 |
+|----------|------|
+| 배경 이미지 | 판타지 풍경 타이틀 배경 |
+| 게임 제목 | 화면 중앙 상단에 "Idle Quest" 표시 |
+| 시작 버튼 | 화면 중앙에 배치, 클릭 시 플레이 씬으로 전환 |
+| 종료 버튼 | 시작 버튼 하단에 배치 |
+
+**전환 조건** : 시작 버튼 클릭 → 플레이 씬
+
+---
+
+### 2. 플레이 씬 (Play Scene)
+
+#### 전투 배경 (스테이지별)
+
+| 스테이지 | 배경 이미지 |
+|---------|-----------|
+| 1~2 스테이지 (숲) | ![숲 배경](../resource/image/background/battle_forest.png) |
+| 3~4 스테이지 (던전) | ![던전 배경](../resource/image/background/battle_dungeon.png) |
+| 5 스테이지 (동굴) | ![동굴 배경](../resource/image/background/battle_cave.png) |
+
+#### 화면 레이아웃
+
+```
+┌─────────────────────────────────────────────────────┐
+│  [스테이지: 1-1]                   [골드: 0]         │
+├──────────────┬────────────────────┬─────────────────┤
+│              │                    │                 │
+│   영웅        │     전투 배경       │   몬스터         │
+│  [HP ████░]  │                    │  [HP ████░]     │
+│              │                    │                 │
+├──────────────┴────────────────────┴─────────────────┤
+│  [공격력 강화]  [HP 강화]  [방어력 강화]  [공격속도 강화] │
+│                                    [장착 장비 정보]   │
+└─────────────────────────────────────────────────────┘
+```
+
+| 구성 요소 | 위치 | 설명 |
+|----------|------|------|
+| 스테이지 정보 | 상단 좌측 | 현재 스테이지 번호 표시 |
+| 보유 골드 | 상단 우측 | 현재 골드량 표시 |
+| 영웅 캐릭터 | 좌측 중앙 | 스프라이트 애니메이션 + HP 바 |
+| 전투 배경 | 화면 중앙 | 스테이지에 따라 변경 |
+| 몬스터 | 우측 중앙 | 스프라이트 애니메이션 + HP 바 |
+| 업그레이드 패널 | 하단 | 클릭으로 스탯 강화 |
+| 장착 장비 | 우측 하단 | 현재 장착 장비 아이콘 표시 |
+
+**전환 조건** : 최종 보스 처치 → 종료 씬
+
+---
+
+### 3. 종료 씬 (End Scene)
+
+![타이틀 배경](../resource/image/background/title_bg.png)
+
+| 구성 요소 | 설명 |
+|----------|------|
+| 배경 이미지 | 타이틀 배경 재사용 (어둡게 처리) |
+| 클리어 메시지 | 화면 중앙 "QUEST CLEAR!" 텍스트 |
+| 최종 스테이지 | 도달한 최고 스테이지 표시 |
+| 처치 몬스터 수 | 총 처치한 몬스터 수 표시 |
+| 다시 하기 버튼 | 클릭 시 시작 씬으로 복귀 |
+
+**전환 조건** : 다시 하기 버튼 클릭 → 시작 씬
+
+---
+
 ## 게임 화면 구성
 
 - **좌측** : 영웅 캐릭터 및 HP 게이지
@@ -93,14 +170,51 @@
 
 ## 필요한 이미지 목록
 
-- 판타지 배경 (숲, 던전, 화산 등 스테이지별 1종씩)
-- 영웅 캐릭터 스프라이트
-- 일반 몬스터 스프라이트 3종 (슬라임, 오크, 스켈레톤)
-- 보스 스프라이트 1종
-- HP 게이지 바
-- 골드 아이콘
-- 업그레이드 버튼 UI
-- 타이틀 화면 배경
+### 배경
+
+| 용도 | 파일 경로 |
+|------|---------|
+| 타이틀 / 엔딩 배경 | `resource/image/background/title_bg.png` |
+| 전투 배경 - 숲 (스테이지 1~2) | `resource/image/background/battle_forest.png` |
+| 전투 배경 - 던전 (스테이지 3~4) | `resource/image/background/battle_dungeon.png` |
+| 전투 배경 - 동굴 (스테이지 5) | `resource/image/background/battle_cave.png` |
+
+### 플레이어
+
+| 용도 | 파일 경로 |
+|------|---------|
+| 영웅 공격 | `resource/image/player/colour1/nooutline/120x80_pngsheets/_Attack.png` |
+| 영웅 콤보 공격 | `resource/image/player/colour1/nooutline/120x80_pngsheets/_AttackCombo.png` |
+| 영웅 피격 | `resource/image/player/colour1/nooutline/120x80_pngsheets/` (관련 스프라이트) |
+
+### 몬스터 (일반)
+
+| 몬스터 | 파일 경로 |
+|--------|---------|
+| 고블린 (Idle/Attack/Death) | `resource/image/enemy/monsters_creatures_fantasy/goblin/` |
+| 버섯몬스터 (Idle/Attack/Death) | `resource/image/enemy/monsters_creatures_fantasy/mushroom/` |
+| 스켈레톤 (Idle/Attack/Death) | `resource/image/enemy/monsters_creatures_fantasy/skeleton/` |
+| 비행눈 (Flight/Attack/Death) | `resource/image/enemy/monsters_creatures_fantasy/flying_eye/` |
+| 박쥐 (Fly/Attack/Death) | `resource/image/enemy2/monsters_creatures_fantasy_2/bat/` |
+| 쥐 (Idle/Attack/Death) | `resource/image/enemy2/monsters_creatures_fantasy_2/rat/` |
+| 슬라임 (Idle/Attack/Death) | `resource/image/enemy2/monsters_creatures_fantasy_2/slime/` |
+| 미믹 (Idle/Attack/Death) | `resource/image/enemy2/monsters_creatures_fantasy_2/mimic/` |
+
+### UI
+
+| 용도 | 파일 경로 |
+|------|---------|
+| 게임 아이콘 모음 | `resource/image/ui/free_icon_collection/1024_px/` |
+| 대화창 / 정보창 테두리 | `resource/image/ui_border/game_info_and_dialogue_border/` |
+| 게임 메뉴 UI | `resource/image/ui_menu/game_menu/` |
+
+### 장비
+
+| 용도 | 파일 경로 |
+|------|---------|
+| 초보 장비 아이콘 | `resource/image/weapon/equipment/amateur/` |
+| 일반 장비 아이콘 | `resource/image/weapon/equipment/standard/` |
+| 훈련용 장비 아이콘 | `resource/image/weapon/equipment/training/` |
 
 ## 필요한 사운드 목록
 
