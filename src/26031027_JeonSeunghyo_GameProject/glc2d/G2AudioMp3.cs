@@ -3,6 +3,7 @@
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------
 using NAudio.Wave;
 using Vortice.XAudio2;
+using AudioBuffer = Vortice.XAudio2.AudioBuffer;
 
 class G2AudioMp3 : IDisposable
 {
