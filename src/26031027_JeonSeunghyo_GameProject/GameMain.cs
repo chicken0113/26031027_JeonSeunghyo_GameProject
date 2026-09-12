@@ -2,76 +2,63 @@
 // Author: 3dapi (https://github.com/3dapi)
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+using Vortice.Mathematics;
+using Vortice.DirectWrite;
+
 class GameMain : G2AppBase
 {
 	public override System.Drawing.Size ScreenSize => GameGlobal.ScreenSize;
 	public override string GameName => GameGlobal.GameName;
 
-	enum Scene { Title, Play, End }
-	Scene _scene;
-	SceneTitle? _title;
-	ScenePlay?  _play;
-	SceneEnd?   _end;
+	G2Texture? _titleBg;
+	G2Font?    _titleFont;
+	G2Font?    _btnFont;
+	bool       _prevClick;
+	bool       _started;
 
 	protected override void Initialize()
 	{
-		_scene = Scene.Title;
-		_title = new SceneTitle();
-		_title.Initialize();
+		_titleBg   = new G2Texture("resource/image/background/title_bg.png");
+		_titleFont = new G2Font("Arial", 72, FontWeight.Heavy,  Vortice.DirectWrite.FontStyle.Normal,
+		                        TextAlignment.Center, ParagraphAlignment.Center);
+		_btnFont   = new G2Font("Arial", 38, FontWeight.Normal, Vortice.DirectWrite.FontStyle.Normal,
+		                        TextAlignment.Center, ParagraphAlignment.Center);
+
+		this.ClearColor = new Color4(0.05f, 0.05f, 0.15f, 1.0f);
 	}
 
 	protected override void Update()
 	{
-		switch (_scene)
+		if (_started) return;
+
+		bool down  = Input.IsButtonDown(System.Windows.Forms.MouseButtons.Left);
+		bool click = down && !_prevClick;
+		_prevClick = down;
+
+		if (click)
 		{
-			case Scene.Title:
-				if (_title!.Update((float)DeltaTime))
-				{
-					_title.Dispose(); _title = null;
-					_play = new ScenePlay();
-					_play.Initialize();
-					_scene = Scene.Play;
-				}
-				break;
-
-			case Scene.Play:
-				int result = _play!.Update((float)DeltaTime);
-				if (result >= 0)
-				{
-					_play.Dispose(); _play = null;
-					_end = new SceneEnd(result);
-					_end.Initialize();
-					_scene = Scene.End;
-				}
-				break;
-
-			case Scene.End:
-				if (_end!.Update((float)DeltaTime))
-				{
-					_end.Dispose(); _end = null;
-					_title = new SceneTitle();
-					_title.Initialize();
-					_scene = Scene.Title;
-				}
-				break;
+			var p = Input.MousePosition;
+			if (p.X >= 330 && p.X <= 630 && p.Y >= 395 && p.Y <= 455)
+				_started = true;
 		}
 	}
 
 	protected override void Render()
 	{
-		switch (_scene)
-		{
-			case Scene.Title: _title!.Render(); break;
-			case Scene.Play:  _play!.Render();  break;
-			case Scene.End:   _end!.Render();   break;
-		}
+		_titleBg!.Draw(new Rect(0, 0, 960, 640), new Rect(0, 0, 192, 108));
+
+		_titleFont!.DrawText("IDLE QUEST",
+		    new Rect(0, 120, 960, 160), new Color4(1.0f, 0.88f, 0.2f, 1.0f));
+
+		_btnFont!.DrawText("[ START ]",
+		    new Rect(0, 395, 960, 65), new Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	}
 
 	public override void Dispose()
 	{
-		_title?.Dispose();
-		_play?.Dispose();
-		_end?.Dispose();
+		_titleBg?.Dispose();
+		_titleFont?.Dispose();
+		_btnFont?.Dispose();
 		base.Dispose();
 	}
 }
