@@ -2,47 +2,76 @@
 // Author: 3dapi (https://github.com/3dapi)
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-using Vortice.Mathematics;
-
 class GameMain : G2AppBase
 {
 	public override System.Drawing.Size ScreenSize => GameGlobal.ScreenSize;
 	public override string GameName => GameGlobal.GameName;
 
+	enum Scene { Title, Play, End }
+	Scene _scene;
+	SceneTitle? _title;
+	ScenePlay?  _play;
+	SceneEnd?   _end;
+
 	protected override void Initialize()
 	{
-		//---------------------------------------
-		// 게임 관련 객체를 생성합니다.
-		//---------------------------------------
+		_scene = Scene.Title;
+		_title = new SceneTitle();
+		_title.Initialize();
 	}
 
 	protected override void Update()
 	{
-		double elapsed = TotalTime;
+		switch (_scene)
+		{
+			case Scene.Title:
+				if (_title!.Update((float)DeltaTime))
+				{
+					_title.Dispose(); _title = null;
+					_play = new ScenePlay();
+					_play.Initialize();
+					_scene = Scene.Play;
+				}
+				break;
 
-		this.ClearColor = new Color4(
-			red: (float)(Math.Sin(elapsed) * 0.5 + 0.5),
-			green: (float)(Math.Sin(elapsed + Math.PI / 2.0) * 0.5 + 0.5),
-			blue: (float)(Math.Sin(elapsed + Math.PI) * 0.5 + 0.5),
-			alpha: 1.0f);
+			case Scene.Play:
+				int result = _play!.Update((float)DeltaTime);
+				if (result >= 0)
+				{
+					_play.Dispose(); _play = null;
+					_end = new SceneEnd(result);
+					_end.Initialize();
+					_scene = Scene.End;
+				}
+				break;
 
-		//---------------------------------------
-		// 게임 관련 객체를 갱신합니다.
-		//---------------------------------------
+			case Scene.End:
+				if (_end!.Update((float)DeltaTime))
+				{
+					_end.Dispose(); _end = null;
+					_title = new SceneTitle();
+					_title.Initialize();
+					_scene = Scene.Title;
+				}
+				break;
+		}
 	}
 
 	protected override void Render()
 	{
-		//---------------------------------------
-		// 게임 관련 객체를 렌더링 합니다.
-		//---------------------------------------
+		switch (_scene)
+		{
+			case Scene.Title: _title!.Render(); break;
+			case Scene.Play:  _play!.Render();  break;
+			case Scene.End:   _end!.Render();   break;
+		}
 	}
 
 	public override void Dispose()
 	{
+		_title?.Dispose();
+		_play?.Dispose();
+		_end?.Dispose();
 		base.Dispose();
-		//---------------------------------------
-		// 게임 관련 객체를 해제합니다.
-		//---------------------------------------
 	}
 }
