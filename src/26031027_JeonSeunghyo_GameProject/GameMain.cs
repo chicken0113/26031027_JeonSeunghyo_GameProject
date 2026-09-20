@@ -26,6 +26,9 @@ class GameMain : G2AppBase
 	G2Texture? _btnGameOptions;
 	G2Texture? _btnQuitGame;
 	G2Font?    _titleFont;
+	G2AudioSound? _titleBgm;
+	G2AudioSound? _battleBgm;
+	G2AudioSound? _btnClick;
 	bool       _prevClick;
 	bool       _showSettings;
 	GameScene  _scene = GameScene.Title;
@@ -46,7 +49,13 @@ class GameMain : G2AppBase
 		_btnQuitGame    = new G2Texture("resource/image/ui_menu/game_menu/1x/Asset 5 - 1080p.png");
 		_titleFont      = new G2Font("Arial", 72, FontWeight.Heavy, Vortice.DirectWrite.FontStyle.Normal,
 		                             TextAlignment.Center, ParagraphAlignment.Center);
+		_titleBgm  = new G2AudioSound("resource/audio/title_bgm.wav");
+		_battleBgm = new G2AudioSound("resource/audio/battle_bgm.wav");
+		_btnClick  = new G2AudioSound("resource/audio/btn_click.wav");
+
 		this.ClearColor = new Color4(0.05f, 0.05f, 0.15f, 1.0f);
+
+		_titleBgm.Play(true);
 	}
 
 	protected override void Update()
@@ -57,7 +66,13 @@ class GameMain : G2AppBase
 
 		if (_scene == GameScene.Title)
 		{
-			if (click) _scene = GameScene.Play;
+			if (click)
+			{
+				_btnClick!.Play();
+				_titleBgm!.Stop();
+				_battleBgm!.Play(true);
+				_scene = GameScene.Play;
+			}
 			return;
 		}
 
@@ -69,6 +84,7 @@ class GameMain : G2AppBase
 		// 세팅 버튼 클릭 (우상단 855,8 ~ 945,40)
 		if (mx >= 855 && mx <= 945 && my >= 8 && my <= 40)
 		{
+			_btnClick!.Play();
 			_showSettings = !_showSettings;
 			return;
 		}
@@ -78,6 +94,9 @@ class GameMain : G2AppBase
 			// MAIN MENU 버튼 → 타이틀 화면으로
 			if (mx >= 340 && mx <= 620 && my >= 230 && my <= 276)
 			{
+				_btnClick!.Play();
+				_battleBgm!.Stop();
+				_titleBgm!.Play(true);
 				_scene = GameScene.Title;
 				_showSettings = false;
 				return;
@@ -85,6 +104,7 @@ class GameMain : G2AppBase
 			// QUIT GAME 버튼 → 게임 종료
 			if (mx >= 340 && mx <= 620 && my >= 390 && my <= 444)
 			{
+				_btnClick!.Play();
 				Close();
 			}
 		}
@@ -146,6 +166,9 @@ class GameMain : G2AppBase
 		_btnGameOptions?.Dispose();
 		_btnQuitGame?.Dispose();
 		_titleFont?.Dispose();
+		_titleBgm?.Dispose();
+		_battleBgm?.Dispose();
+		_btnClick?.Dispose();
 		base.Dispose();
 	}
 }
